@@ -1,6 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  parseLink: (url) => ipcRenderer.invoke('parser:parseLink', url),
+  parseInputLinks: (text) => ipcRenderer.invoke('parser:parseInputLinks', text),
+
   getHistory: () => ipcRenderer.invoke('history:get'),
   addHistory: (item) => ipcRenderer.invoke('history:add', item),
   deleteHistory: (id) => ipcRenderer.invoke('history:delete', id),

@@ -1,5 +1,3 @@
-import { parseLink } from './parser'
-
 class PLimit {
   constructor(concurrency) {
     this.concurrency = concurrency
@@ -61,7 +59,14 @@ export class DownloadManager {
 
     this.store.updateTask(taskId, { status: 'parsing', progress: 0 })
 
-    const parsed = await parseLink(task.link)
+    let parsed
+    try {
+      parsed = this.api && typeof this.api.parseLink === 'function'
+        ? await this.api.parseLink(task.link)
+        : { success: false, error: '解析接口不可用' }
+    } catch (e) {
+      parsed = { success: false, error: `解析异常：${e.message || '未知错误'}` }
+    }
 
     if (!parsed.success) {
       this.store.updateTask(taskId, {

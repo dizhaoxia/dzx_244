@@ -3,6 +3,7 @@ import { join } from 'path'
 import Store from 'electron-store'
 import fs from 'fs'
 import path from 'path'
+import { parseLink, parseInputLinks } from './parser.js'
 
 let store = null
 
@@ -69,6 +70,14 @@ app.on('window-all-closed', () => {
 })
 
 function setupIpc() {
+ipcMain.handle('parser:parseLink', async (_e, url) => {
+  return parseLink(url)
+})
+
+ipcMain.handle('parser:parseInputLinks', async (_e, text) => {
+  return parseInputLinks(text)
+})
+
 ipcMain.handle('history:get', async () => {
   return store.get('history', [])
 })
